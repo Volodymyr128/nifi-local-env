@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  sql-server:
+    container_name: sql-server
+    image: mcr.microsoft.com/mssql/server
+    #volumes: 
+    #  - "~/projects/local-nifi/mount/setup.sql:/docker-entrypoint-initdb.d/setup.sql"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Qweqwe123
+    expose:
+      - "1433"
+
+  # Run Nifi UI on http://aab48d2177ba:8080/nifi. Also 7070 port is opened for HTTP callbacks
+  nifi:
+    container_name: nifi
+    depends_on:
+      - sql-server 
+    image: apache/nifi:1.10.0
+    volumes:
+      - "~/projects/local-nifi/mount/:/jars/"
+    ports:
+      - "7070:7070"
+      - "8080:8080"

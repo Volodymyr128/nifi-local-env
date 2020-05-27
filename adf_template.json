@@ -1,0 +1,62 @@
+{
+    "name": "Test audit",
+    "properties": {
+        "activities": [
+            {
+                "name": "WebHook",
+                "type": "WebHook",
+                "dependsOn": [],
+                "userProperties": [],
+                "typeProperties": {
+                    "url": "http://13.79.17.243:7070/start",
+                    "method": "POST",
+                    "body": {
+                        "value": "@json(\n  concat(\n    '{ \"batch_id\": ',      string(pipeline().parameters.batch_id),\n    ', \"run_date\": ',      string(pipeline().parameters.run_date),\n    ', \"modes\": ',  string(pipeline().parameters.modes), \n    ', \"databases\": ',  string(pipeline().parameters.databases), \n    '}'\n  )\n)",
+                        "type": "Expression"
+                    },
+                    "timeout": "00:00:30",
+                    "reportStatusOnCallBack": false
+                }
+            },
+            {
+                "name": "Dummy ETL",
+                "type": "ExecutePipeline",
+                "dependsOn": [
+                    {
+                        "activity": "WebHook",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Dummy ETL",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                }
+            }
+        ],
+        "parameters": {
+            "batch_id": {
+                "type": "string",
+                "defaultValue": "128"
+            },
+            "run_date": {
+                "type": "string",
+                "defaultValue": "'2020-04-07'"
+            },
+            "modes": {
+                "type": "string",
+                "defaultValue": "'FULL_SNAPSHOT, INCEMENTAL_TIMESTAMP'"
+            },
+            "databases": {
+                "type": "string",
+                "defaultValue": "'AX'"
+            }
+        },
+        "annotations": []
+    }
+}

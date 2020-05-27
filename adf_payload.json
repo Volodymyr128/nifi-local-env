@@ -1,0 +1,7 @@
+{
+  "batch_id": 128,
+  "run_date": "2020-04-07",
+  "modes": "FULL_SNAPSHOT",
+  "databases": "AX,CRM",
+  "callBackUri": "dummy_url"
+}
